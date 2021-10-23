@@ -4,10 +4,10 @@ This application crawls Ethereum transactions, given an address (wallet) and sta
 
 ## Requires
 
-requests
-pandas
-kaleido
-flask
+* requests
+* pandas
+* kaleido
+* flask
 
 ## Usage
 
