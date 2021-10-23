@@ -4,10 +4,12 @@
 		<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/main.css') }}">
 	</head>
 	<body>
-		<div id="title">Transactions for {{ wallet | safe }}</div></br></br>
-		<div id="chart">
-			<img src=" {{ url_for('static', filename='images/ethValues.png') }}"/>
-		</div></br></br>
-		<div id="table">{{tableText | safe}}</div>
+		<div class="container">
+			<div class="title">Transactions for {{ wallet | safe }}</div>
+			<div class="chart">
+				<img src=" {{ url_for('static', filename='images/ethValues.png') }}"/>
+			</div>
+		</div>
+		<div class="table">{{tableText | safe}}</div>
 	</body>
 </html>
