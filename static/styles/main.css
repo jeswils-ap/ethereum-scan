@@ -6,6 +6,7 @@ img {
 
 div#title {
 	text-align: center;
+	font-family: sans-serif;
 	font-size:  2em;
 }
 
@@ -17,11 +18,11 @@ div#table {
 
 table {
 	border-collapse: collapse;
-    margin: 25px 0;
+    margin: 1.6em 0;
     font-size: 0.9em;
     font-family: sans-serif;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    min-width: 25em;
+    box-shadow: 0 0 1.25em rgba(0, 0, 0, 0.15);
 	margin-left: auto;
     margin-right: auto;
 }
@@ -35,7 +36,13 @@ thead tr {
 td {
 	background-color: #3269a8;
 	color: #ffffff;
-    padding: 12px 15px;
+	padding: 0.75em 0.95em;
+	word-wrap: break-word;
+	max-width: 5em;
+	-webkit-hyphens: auto; /* iOS 4.2+ */
+	-moz-hyphens: auto; /* Firefox 5+ */
+	-ms-hyphens: auto; /* IE 10+ */
+	hyphens: auto;
 }
 
 tr {
