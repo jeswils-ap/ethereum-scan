@@ -19,4 +19,4 @@ In terminal, run the script to start the flask service, then open a browser and 
 
 ![Search page](readme_assets/search_page.png)
 
-![Results] (readme_assets/results.png)
+![Results](readme_assets/results.png)
