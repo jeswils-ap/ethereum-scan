@@ -12,7 +12,7 @@ from flask import Flask, request, render_template, url_for
 logging.basicConfig(format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
                     datefmt='%H:%M:%S',
                     level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("ethereumCrawler")
 
 __api_key__ = '1IDVMG3ZGGGGRQUUXX262BADNJ1EK8Z9N4'
 __wei_to_eth__ = 10 ** 18
@@ -28,22 +28,52 @@ def frontPage():
 def crawl():
     address = request.form['address']
     start_block = request.form['block']
-    
-    end_block = get_current_block()
-    normalTrans = get_normal_transactions(address, start_block, end_block)
-    internalTrans = get_internal_transactions(address, start_block, end_block)
-    
-    normalTransDf = create_datafram(normalTrans)
-    internalTransDf = create_datafram(internalTrans)
 
-    mergedFrame = merge_frames([normalTransDf, internalTransDf])
-    finalDf = get_token_details(mergedFrame)
-    
-    dfHtml = table_to_html(finalDf)
-    #path = os.path.join(app.config['IMAGES'], 'ethValues.png')
-    #print(path)
-    
-    return render_template('results.html', wallet=address, tableText=dfHtml)
+    valid_address = address_valid(address)
+    valid_start = start_block_valid(start_block)
+
+    if (valid_address[0] and valid_start[0]):
+        end_block = get_current_block()
+        normalTrans = get_normal_transactions(address, abs(int(start_block)), end_block)
+        internalTrans = get_internal_transactions(address, abs(int(start_block)), end_block)
+        
+        normalTransDf = create_datafram(normalTrans)
+        internalTransDf = create_datafram(internalTrans)
+
+        mergedFrame = merge_frames([normalTransDf, internalTransDf])
+        finalDf = get_token_details(mergedFrame)
+        
+        dfHtml = table_to_html(finalDf)
+        
+        return render_template('results.html', wallet=address, tableText=dfHtml)
+    else:
+        if not valid_address[0]:
+            return render_template('error.html', error=valid_address[1])
+        else:
+            return render_template('error.html', error=valid_start[1])
+
+
+def address_valid(address: str):
+    if not (len(address) == 42):
+        error = "Address must be 42 characters, and begin with '0x'"
+        logger.error(error)
+        return False, error
+    try:
+        int(address, 16)
+        return True, ""
+    except ValueError as e:
+        error = "Input must be in Hex format"
+        logger.error(error)
+        return False, error
+
+def start_block_valid(start_block):
+    try:
+        int(start_block) >= 0
+        return True, ""
+    except ValueError:
+        error = "Start block must be an integer"
+        logger.error(error)
+        return False, error
 
 def get_current_block():
     url = 'https://api.etherscan.io/api?module=block&action=getblocknobytime&timestamp={0}&closest=before&apikey={1}'.format(int(time()), __api_key__)
