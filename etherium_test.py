@@ -11,15 +11,14 @@ from flask import Flask, request, render_template, url_for
 
 logging.basicConfig(format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
                     datefmt='%H:%M:%S',
-                    level=logging.INFO)
+                    level=logging.DEBUG)
 logger = logging.getLogger("ethereumCrawler")
 
 __api_key__ = '1IDVMG3ZGGGGRQUUXX262BADNJ1EK8Z9N4'
 __wei_to_eth__ = 10 ** 18
-IMAGE_FOLDER = os.path.join(os.getcwd(), 'images')
+IMAGE_FOLDER = os.path.join(os.getcwd(), 'static', 'images')
 
 app = Flask(__name__, template_folder='template')
-app.config['IMAGES'] = IMAGE_FOLDER
 @app.route("/", methods=['GET'])
 def frontPage():
     return render_template('index.html')
@@ -43,6 +42,7 @@ def crawl():
         mergedFrame = merge_frames([normalTransDf, internalTransDf])
         finalDf = get_token_details(mergedFrame)
         
+        plot_data(finalDf)
         dfHtml = table_to_html(finalDf)
         
         return render_template('results.html', wallet=address, tableText=dfHtml)
@@ -219,10 +219,11 @@ def get_token_details(transDf):
     return tempDf
 
 def plot_data(transactionDf):
+    logger.debug("Plotting DataFrame")
     pd.options.plotting.backend = 'plotly'
     fig = transactionDf.plot(x='timeStamp' , y=['ethValue','delta'])
-    fig.write_image(file='./images/ethValues.png', format='png')
-    fig.show()
+    logger.debug("Saving file to {0}".format(IMAGE_FOLDER))
+    fig.write_image(file='./static/images/ethValues.png', format='png')
 
 def table_to_html(transactions):
     logger.debug("Converting table to HTML")
